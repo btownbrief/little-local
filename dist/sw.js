@@ -1,4 +1,4 @@
-const CACHE='little-local-offline-v2.2';
+const CACHE='little-local-offline-v2.3';
 const FILES=['./','./index.html','./style.css','./app.js','./engine.js','./content.js','./profile.js','./audio.js','./manifest.webmanifest','./assets/goods-atlas.png','./assets/goods-expansion.png','./assets/shop-interior.png','./assets/icon-192.png','./assets/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES.map(url=>new Request(url,{cache:'reload'})))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('little-local-offline-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});

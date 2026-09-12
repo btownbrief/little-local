@@ -2,6 +2,8 @@
 
 An original cozy shelf-matching browser game set in a Burlington corner shop. The expanded release includes **600 fixed Trail levels, 12 chapters, five modes, six shops, 24 goods, and 24 achievement keepsakes**.
 
+**[Play Little Local](https://play.btownbrief.com/little-local/)** · [Btown Hub](https://hub.btownbrief.com/) · [Btown Arcade](https://play.btownbrief.com/)
+
 Run `npm run dev` and open `http://localhost:4173`. The static game is in `dist/`; there are no package dependencies and no build step. Run `npm test` for rules, generation, migration, and progression checks, and `npm run check` for JavaScript syntax checks.
 
 ## Play
@@ -24,9 +26,17 @@ Settings include six shop themes, item labels, reduced motion, volume, synthesiz
 
 Progress is local to each browser/site origin. The version-2 profile imports version-1 totals and sessions, preserving the original saved data. Different modes retain separate unfinished boards. Completed level medals never decrease on replay. Export/restore a JSON backup from My records, with selectable text and paste-to-restore alternatives for browsers that limit file downloads.
 
-A web manifest and service worker support Home Screen use and offline loading after a successful initial visit. Wait for “Ready offline” in the footer. On iPhone, open the site in Safari, Share → Add to Home Screen, and enable Open as Web App. Private hosted access still requires the owner's sign-in for the first connection. This is a browser game, not a native iOS binary.
+A web manifest and service worker support Home Screen use and offline loading after a successful initial visit. Wait for “Ready offline” in the footer. On iPhone, open the site in Safari, Share → Add to Home Screen, and enable Open as Web App. The public game needs no account. This is a browser game, not a native iOS binary.
+
+Moving from the original private prototype? Export your progress in **My records** on the old site, then restore it in My records on the public game. Each site's browser storage is separate; the old save stays on the old site.
 
 For development, service-worker asset fetches try the network first. Increment the cache version in `dist/sw.js` whenever publishing changed offline assets. Offline caches store the game; progress remains in localStorage and should be backed up separately.
+
+## Publishing
+
+GitHub Pages publishes `dist/` at `https://play.btownbrief.com/little-local/` after changes merge to `main` and the game checks pass. The project inherits the Btown Arcade's custom domain; it does not need its own CNAME. Paths, the web-app manifest, and the service worker are scoped to the game subdirectory.
+
+The canonical name and description live in `games.json` in [btownbrief/btownbrief.github.io](https://github.com/btownbrief/btownbrief.github.io). The Arcade, Hub, and shared network search read that entry automatically. `.openai/hosting.json` retains the original private prototype binding; GitHub Actions does not use it.
 
 ## Source and design
 
