@@ -1,0 +1,7 @@
+Use case: precise-object-edit.
+Edit target: the supplied 1448 x 1086 image of twelve illustrated goods.
+Make exactly one background change: replace ALL gray-and-white checkerboard squares with perfectly uniform pure white, hexadecimal #FFFFFF, RGB 255,255,255.
+The result must be an ordinary opaque RGB image on a solid white matte, like a clean white-background catalog sprite sheet. Do not use transparency. Do not draw a checkerboard. No gray tint, pattern, texture, gradient, or shadow in the background.
+Preserve all twelve goods, including object identities, silhouettes, details, colors, materials, shading, sizes, rotations, exact positions, four-column three-row arrangement, and 1448 x 1086 canvas size. Do not add or remove goods.
+Keep the pumpkin, pear, lemonade bottle, ice cream cone, candle, wrapped soap, blue notebook, red book, teal yarn, mushroom, pretzel, and green tea tin. Fill every exposed background region with uniform #FFFFFF, including pretzel holes and the gap by the yarn tail. Preserve clean antialiased silhouette edges and internal subject details.
+No extra props, no text, no grid, no frames, no UI, no watermark. The entire background surrounding and between the twelve goods must be one perfectly flat pure-white color.

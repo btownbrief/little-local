@@ -35,30 +35,46 @@ Little Local combines direct selection with a seven-space basket. Any three iden
 | Optional excitement | Rush begins on the first pick. It pauses in dialogs, when the page is hidden, and when the window loses focus. The final three items stop the clock. At expiry, retry or finish that same board untimed. |
 | A shared daily ritual | A deterministic daily board based on the date in America/New_York. Unlimited replays; a shareable text result; bests saved on this device. No fabricated global rankings. |
 | Reward skill without requiring speed | Consecutive triples build a chain based on the sequence of picks, not a time window. Taking a thoughtful break never breaks a Cozy chain. |
-| Legible goods | Twelve original illustrated goods, an item-count legend, optional name labels, keyboard activation/navigation, and reduced-motion support. |
-| A place with personality | The corner shop, morning bakery, and lakeside stand offer different colors and goods for future deliveries. A small journal records completed deliveries, matches, and chains. |
-| Pick up where you left off | Device-local saves retain separate Cozy, Daily, and Rush sessions, undo history, settings, and journal totals. |
+| Legible goods | Twenty-four original illustrated goods, an item-count legend, optional name labels, keyboard activation/navigation, and reduced-motion support. |
+| A place with personality | Six shops offer different palettes and goods. A 24-good collection, four earned shop moods, favorite displays, and 24 keepsakes add persistent progression. |
+| Pick up where you left off | Device-local saves retain separate Cozy, Trail, Daily, Rush, and Pantry sessions, undo history, settings, medals, collections, and records. Export and restore a JSON backup. |
 
 ## Fairness and difficulty, precisely
 
-The generator shuffles complete triples across six shelves. The solver searches sequences of visible complete triples, advances newly emptied shelves, and returns actual shelf/slot choices through the entire board. Acceptance therefore establishes at least one solution, rather than merely checking that every type occurs a multiple of three times.
+The generator shuffles complete triples across six shelves, or eight/twelve for the Grand Pantry. The solver searches sequences of visible complete triples, advances newly emptied shelves, decrements ribbon locks, rotates conveyor front rows after matches, and returns actual shelf/slot choices through the entire board. Acceptance therefore establishes at least one solution, rather than merely checking that every type occurs a multiple of three times.
 
 This is not an optimal-move or human-speed proof. A player can make choices that fill the basket or complicate the board; free undo and rearrange provide recovery. Hints first look for a full solution when the basket is empty, then favor completing already held goods. If no immediate triple fits, the UI explains that stock is tucked away and points to recovery.
 
-Early deliveries have 36 goods and six kinds. Later deliveries have 54 goods and gradually introduce more kinds, up to twelve. Item hit targets do not shrink as the number of kinds grows. The current progression broadens visual search and hidden-stock planning; it does not yet introduce mechanical obstacles.
+The 600-level Trail is a fixed, reproducible campaign with 12 chapters of 50 levels. It starts with 18 goods and four kinds, introduces ribbons in chapter 2, conveyors in chapter 3, and frosted stock in chapter 4. Later chapters combine these mechanics. Every tenth level in a chapter is a larger 72-good delivery. All levels are available for exploration and replay; there are no purchase or energy gates.
 
-## Ideas deliberately left for a playtest-led next iteration
+Random candidates must pass a complete-clear search. The constructive fallback mixes whole depth layers across shelves while preserving complete triples. Its initial open and ribboned stock are mixed separately so open shelves can supply the matches needed to unwrap ribbons. This fallback is itself checked by the solver. A sweep of the 600 released seeds found 600 distinct layouts and no boards consisting exclusively of same-good rows.
 
-Conveyors, locks, fragile goods, wildcards, category substitutions, and delivery interruptions can change the rules substantially. Category substitutions also complicate exact-three conservation; fragile objects and move bombs can undermine the requested cozy feel. They should enter as separately introduced puzzle variants only after direct playtesting of this core loop.
+## Features added in the expanded version
 
-Whole-row slides belong to the other game and were excluded following the user’s clarification. Multiplayer, global leaderboards, accounts, a native App Store release, physical-device validation, and a fully decorated store simulation are not implemented. The current journal is modest progression, not an unlockable building system.
+- **Five modes:** endless untimed Cozy, the 600-level Trail, a shared untimed Daily, optional Rush, and 72/144-good Grand Pantry.
+- **Three Cozy difficulty settings:** Gentle, Balanced, and Thoughtful. Optional later shelf surprises can be disabled. Flow automatically brings a new Cozy delivery after a cancellable five-second breather.
+- **Three stars per clear:** finish, avoid rearranges, and reach the displayed chain goal or fulfill a neighbor order. Taking longer never lowers a Trail or Cozy star rating.
+- **Optional neighbor orders:** match the requested type within a number of matches for a bonus. The deadline is a move-planning constraint, not a clock; missing it never ends a delivery.
+- **Earned lanterns:** each three matches yields one, up to three held. A lantern packs an available triple using the ordinary selection rules. Free undo, hints, and rearrange remain available regardless.
+- **Twenty-four goods:** bronze, silver, and gold collection tiers at 3, 30, and 90 sorted goods of each kind. Completed deliveries contribute their matched goods; old saves preserve totals without inventing historical per-item counts.
+- **A little shop:** pin up to four found goods, collect 24 achievement keepsakes, and earn sunny, rainy, golden-hour, and evening shop scenes.
+- **Comfort controls:** item names, reduced motion, sound volume, quiet/rain/lake ambience, and a distraction-free shelf view. Large Pantry cabinets scroll internally so the basket stays directly below the shelves.
+- **Home Screen and offline support:** a web-app manifest, original app icons, and a service worker cache the game and its local art. Initial access requires a connection and the private site's sign-in. The browser reports when offline files are ready. Browser data can still be evicted or manually cleared, so backups remain useful. [Apple Home Screen instructions](https://support.apple.com/guide/iphone/open-as-web-app-iphea86e5236/ios), [WebKit web-app manifest support](https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/).
+
+## Deliberate boundaries
+
+Whole-row player sliding belongs to the other reference game and remains excluded. Conveyors move automatically only after matches. Fragile goods, move bombs, category substitutions, and arbitrary mid-level stock drops would undermine the current readable, conserved-item rules and cozy default, so they were not added just to inflate the feature list.
+
+The Daily is seeded procedural content, not a hand-authored puzzle. No global leaderboard, multiplayer service, cross-device account sync, native iOS binary, or App Store submission is included. Shop progression is illustrated scenes and collected favorites, not a full store-management simulation. Testing is described separately from physical-device acceptance in the validation record.
 
 ## Artwork
 
-The original twelve-good atlas was created with one built-in imagegen request and integrated as clipped raster artwork. No competitor art or brand assets were reused. The atlas has a genuine alpha channel; nested SVG viewports only crop and display the original raster and do not redraw it.
+The original twelve-good atlas, twelve-good expansion, and shop interior were created with built-in imagegen and integrated as raster artwork. No competitor art or brand assets were reused. The first atlas has a genuine alpha channel. The expansion uses a white matte blended against the shelf background. Nested SVG viewports crop the supplied raster without redrawing the goods.
 
 - Saved atlas: `dist/assets/goods-atlas.png`
 - Exact generation prompt: `docs/art-prompt.txt`
 - Items: maple syrup, apple, milk, cheddar, coffee, blueberries, croissant, flowers, strawberry jam, mitten, honey, and sourdough.
+
+The expansion assets and prompts are `dist/assets/goods-expansion.png`, `dist/assets/shop-interior.png`, `docs/expansion-art-prompt.txt`, and `docs/shop-art-prompt.txt`. Simple app-icon geometry matches the existing Little Local monogram.
 
 All web research used free built-in search and fetch. Firecrawl pages fetched: **0**.
