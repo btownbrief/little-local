@@ -9,16 +9,16 @@
   <meta name="apple-mobile-web-app-title" content="Little Local">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
-  <meta name="description" content="Match three local goods in a cozy Burlington corner shop. Explore 600 levels, five modes, and endless untimed play. Free, no account, and ready for offline play.">
+  <meta name="description" content="A cozy Burlington shop with a real puzzle. Move goods between shelves, match triples to unlock stock, and think ahead across 600 untimed shelf puzzles. Plus 600 classic levels and endless play.">
   <link rel="canonical" href="https://play.btownbrief.com/little-local/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Little Local — A cozy Burlington sorting game">
-  <meta property="og:description" content="Your corner of calm. Match three local goods, explore 600 levels, or settle into endless untimed play. Five modes, 24 goods, and six little shops.">
+  <meta property="og:title" content="Little Local — A cozy Burlington shelf puzzle">
+  <meta property="og:description" content="Make space. Match three. Open the way. 600 untimed shelf puzzles with buried stock and keyed shelves, plus 600 classic levels, six modes, and 24 local goods.">
   <meta property="og:url" content="https://play.btownbrief.com/little-local/">
   <meta property="og:image" content="https://play.btownbrief.com/little-local/assets/shop-interior.png">
   <meta property="og:image:alt" content="Illustrated interior of a cozy Burlington corner shop.">
   <meta name="twitter:card" content="summary_large_image">
-  <title>Little Local — A cozy sorting game</title>
+  <title>Little Local — A cozy shelf puzzle</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23355b4c'/%3E%3Cpath d='M18 15v33h29v-9H28V15z' fill='%23fff1d2'/%3E%3Ccircle cx='43' cy='22' r='7' fill='%23e8b567'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.js"></script>
@@ -28,8 +28,8 @@
   <header class="topbar">
     <a class="brand" href="./" aria-label="Little Local home"><span class="brand-mark" aria-hidden="true">ll<span>✳</span></span><span>little local<small>BURLINGTON, VERMONT</small></span></a>
     <nav class="mode-switch" aria-label="Play mode">
-      <button data-mode="cozy" class="active" aria-pressed="true"><span aria-hidden="true">☕</span> Cozy</button>
-      <button data-mode="trail" aria-pressed="false"><span aria-hidden="true">↗</span> Trail</button>
+      <button data-mode="puzzle" class="active" aria-pressed="true"><span aria-hidden="true">▦</span> Puzzle</button>
+      <button data-mode="cozy" aria-pressed="false"><span aria-hidden="true">☕</span> Cozy</button>
       <button data-mode="daily" aria-pressed="false"><span aria-hidden="true">☀</span> Daily</button>
       <button data-mode="rush" aria-pressed="false"><span aria-hidden="true">ϟ</span> Rush</button>
     </nav>
@@ -52,8 +52,9 @@
     </aside>
     <section class="game" aria-label="Sorting game">
       <div class="game-heading"><div><span class="eyebrow" id="shop-kicker">EST. AT YOUR OWN PACE</span><h2 id="shop-name">The corner shop</h2></div><div class="pace-badge" id="pace-badge"><span aria-hidden="true">∞</span> Take your time</div><button id="pause-button" class="icon-button" aria-label="Pause game" title="Pause">Ⅱ</button></div>
-      <div class="shop-toolbar"><button id="trail-button">↗ 600-level trail</button><button id="pantry-button">▦ Grand pantry</button><button id="collection-button">❋ Collection</button><button id="home-button">⌂ My shop</button></div>
+      <div class="shop-toolbar"><button id="trail-button">↗ 600 shelf puzzles</button><button id="pantry-button">☷ Other modes</button><button id="collection-button">❋ Collection</button><button id="home-button">⌂ My shop</button></div>
       <div id="specials" class="specials"></div>
+      <div id="puzzle-status" class="puzzle-status"></div>
       <div class="cabinet" id="cabinet">
         <div class="cabinet-header"><span id="cabinet-sign">LOCALLY LOVED. LOVINGLY SORTED.</span><span class="cabinet-flower" aria-hidden="true">✿</span></div>
         <div class="shelf-grid" id="board" aria-label="Shop shelves"></div>

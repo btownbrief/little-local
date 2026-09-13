@@ -1,10 +1,10 @@
 import {GOODS,THEMES,MODES,upgradeGame,clone,starsFor} from './engine.js';
 import {ACHIEVEMENTS,LEVEL_COUNT} from './content.js';
-export const STORAGE='little-local:v2';
-export function freshProfile(){return {version:2,settings:{sound:false,focus:false,motion:true,labels:false,theme:'market',difficulty:'balanced',surprises:true,flow:false,ambience:'off',volume:.45,decor:'home'},completed:0,totalMatches:0,bestCombo:0,perfect:0,dailyDays:0,rushWins:0,pantryWins:0,trailWins:0,trailStars:0,orders:0,uniqueGoods:0,collection:Array(GOODS.length).fill(0),favorites:[],earned:[],trail:{},dailyBest:{},sessions:{},mode:'cozy'};}
+export const STORAGE='little-local:v3';
+export function freshProfile(){return {version:3,settings:{sound:false,focus:false,motion:true,labels:false,theme:'market',difficulty:'brainy',surprises:true,flow:false,ambience:'off',volume:.45,decor:'home'},completed:0,totalMatches:0,bestCombo:0,perfect:0,dailyDays:0,rushWins:0,pantryWins:0,trailWins:0,trailStars:0,orders:0,uniqueGoods:0,collection:Array(GOODS.length).fill(0),favorites:[],earned:[],puzzles:{},puzzleWins:0,puzzleStars:0,trail:{},dailyBest:{},sessions:{},mode:'puzzle'};}
 const natural=(n,max=1e9)=>Number.isFinite(n)&&n>=0?Math.min(max,Math.floor(n)):0;
 export function normalizeProfile(raw){
-  if(!raw||![1,2].includes(raw.version)||!raw.settings||!raw.sessions)return null;
+  if(!raw||![1,2,3].includes(raw.version)||!raw.settings||!raw.sessions)return null;
   const p=freshProfile(),s=raw.settings;
   for(const k of ['completed','totalMatches','bestCombo','perfect','rushWins','pantryWins','orders'])p[k]=natural(raw[k]);
   for(const k of ['sound','focus','motion','labels','surprises','flow'])if(typeof s[k]==='boolean')p.settings[k]=s[k];
@@ -13,11 +13,13 @@ export function normalizeProfile(raw){
   if(['off','rain','lake'].includes(s.ambience))p.settings.ambience=s.ambience;
   if(['home','rain','golden','evening'].includes(s.decor))p.settings.decor=s.decor;
   if(Number.isFinite(s.volume))p.settings.volume=Math.max(0,Math.min(1,s.volume));
-  p.mode=MODES.includes(raw.mode)?raw.mode:'cozy';
+  p.mode=raw.version===3&&MODES.includes(raw.mode)?raw.mode:'puzzle';
   p.collection=p.collection.map((_,i)=>natural(raw.collection?.[i]));
   p.uniqueGoods=p.collection.filter(n=>n>0).length;
   p.favorites=[...new Set(raw.favorites||[])].filter(t=>Number.isInteger(t)&&t>=0&&t<GOODS.length&&p.collection[t]>0).slice(0,4);
   for(const [id,r] of Object.entries(raw.trail||{})){if(/^\d+$/.test(id)&&+id>=1&&+id<=LEVEL_COUNT&&r&&r.stars>=1)p.trail[id]={stars:natural(r.stars,3),score:natural(r.score),helps:natural(r.helps),seconds:natural(r.seconds)};}
+  for(const [id,r] of Object.entries(raw.puzzles||{})){if(/^\d+$/.test(id)&&+id>=1&&+id<=600&&r&&r.stars>=1)p.puzzles[id]={stars:natural(r.stars,3),moves:natural(r.moves),score:natural(r.score),helps:natural(r.helps),seconds:natural(r.seconds)};}
+  p.puzzleWins=Object.keys(p.puzzles).length;p.puzzleStars=Object.values(p.puzzles).reduce((n,r)=>n+r.stars,0);
   p.trailWins=Object.keys(p.trail).length;p.trailStars=Object.values(p.trail).reduce((n,r)=>n+r.stars,0);
   for(const [date,r] of Object.entries(raw.dailyBest||{})){if(/^\d{4}-\d{2}-\d{2}$/.test(date)&&r)p.dailyBest[date]={moves:natural(r.moves),helps:natural(r.helps),score:natural(r.score),seconds:natural(r.seconds)};}
   p.dailyDays=Object.keys(p.dailyBest).length;
@@ -42,6 +44,11 @@ export function finishDelivery(p,state){
     const prior=p.dailyBest[state.date];
     if(!prior||helps<prior.helps||helps===prior.helps&&state.score>prior.score||helps===prior.helps&&state.score===prior.score&&result.seconds<prior.seconds)p.dailyBest[state.date]=result;
     p.dailyDays=Object.keys(p.dailyBest).length;
+  }
+  if(state.mode==='puzzle'){
+    const stars=starsFor(state),prior=p.puzzles[state.levelId];
+    if(!prior||stars>prior.stars||stars===prior.stars&&state.moves<prior.moves)p.puzzles[state.levelId]={...result,stars};
+    p.puzzleWins=Object.keys(p.puzzles).length;p.puzzleStars=Object.values(p.puzzles).reduce((n,r)=>n+r.stars,0);
   }
   if(state.mode==='trail'){
     const stars=starsFor(state),prior=p.trail[state.levelId];
