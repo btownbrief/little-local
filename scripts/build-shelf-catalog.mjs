@@ -1,0 +1,10 @@
+import {Worker} from 'node:worker_threads';
+import {readFile,writeFile} from 'node:fs/promises';
+const first=JSON.parse(await readFile('tmp/shelf-candidates.json','utf8'));
+if(first.length!==10||first.some((p,i)=>p.id!==i+1))throw Error('Generate the first 10 candidates before building the catalog.');
+const ranges=[[11,108],[109,206],[207,304],[305,402],[403,500],[501,600]];
+await Promise.all(ranges.map(([start,end])=>new Promise((resolve,reject)=>{const w=new Worker(new URL('./shelf-worker.mjs',import.meta.url),{workerData:{start,end}});w.on('message',m=>console.log(JSON.stringify(m)));w.on('error',reject);w.on('exit',code=>code?reject(Error(`Worker exit ${code}`)):resolve());})));
+const records=first.concat(...await Promise.all(ranges.map(async([start])=>JSON.parse(await readFile(`tmp/shelf-batch-${start}.json`,'utf8')))));
+records.sort((a,b)=>a.id-b.id);if(records.length!==600)throw Error(`Expected 600, got ${records.length}`);
+await writeFile('dist/shelf-catalog.js','// Original shelf puzzles with executable solution routes.\nexport const SHELF_PUZZLES='+JSON.stringify(records)+';\n');
+console.log('600 verified shelf puzzles saved.');

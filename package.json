@@ -1,11 +1,11 @@
 {
   "name": "little-local",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
     "test": "node --test tests/*.test.js",
-    "check": "node --check dist/app.js && node --check dist/engine.js && node --check dist/content.js && node --check dist/profile.js && node --check dist/audio.js && node --check dist/sw.js"
+    "check": "node --check dist/app.js && node --check dist/engine.js && node --check dist/content.js && node --check dist/profile.js && node --check dist/audio.js && node --check dist/sw.js && node --check dist/shelf-rules.js && node --check dist/shelf-engine.js && node --check dist/shelf-ui.js && node --check dist/shelf-worker.js"
   }
 }

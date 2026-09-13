@@ -1,8 +1,8 @@
 {
   "id":"./",
-  "name":"Little Local — A cozy Burlington sorting game",
+  "name":"Little Local — A cozy Burlington shelf puzzle",
   "short_name":"Little Local",
-  "description":"A little corner of calm. 600 Trail levels, endless cozy shelves, and 24 local goods.",
+  "description":"A little calm. A real puzzle. 600 untimed shelf puzzles, 600 classic levels, and 24 local goods.",
   "start_url":"./",
   "scope":"./",
   "display":"standalone",

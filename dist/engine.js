@@ -1,6 +1,7 @@
+import {createShelfGame,validateShelfGame,puzzleStars} from './shelf-engine.js';
 import {GOODS,THEMES,levelSpec,MECHANICS} from './content.js';
 export {GOODS,THEMES};
-export const MODES=['cozy','trail','daily','rush','pantry'];
+export const MODES=['puzzle','cozy','trail','daily','rush','pantry'];
 export function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 export function hash(s){let h=2166136261;for(const c of String(s))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0;}
 export function shuffle(a,rand){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -75,6 +76,7 @@ export function makeShelves(types,rand,options={}){
   return shelves;
 }
 export function createGame({mode='cozy',round=1,seed=1,theme='market',date='',levelId=1,difficulty='balanced',surprises=true,size=144}={}){
+  if(mode==='puzzle')return createShelfGame(levelId);
   const rand=rng(seed);let spec={types:Math.min(6+Math.floor((round-1)/2),12),matches:round<3?12:18,shelfCount:6,mechanics:[],chainGoal:5};
   if(mode==='trail'){spec=levelSpec(levelId);theme=spec.theme;round=levelId;}
   else if(mode==='pantry')spec={...spec,types:12,matches:size===72?24:48,shelfCount:size===72?8:12,chainGoal:10};
@@ -95,6 +97,7 @@ export function createGame({mode='cozy',round=1,seed=1,theme='market',date='',le
   return {version:2,mode,round,seed,theme,date,levelId:mode==='trail'?levelId:null,difficulty,surprises,size,spec,shelves,tray:[],moves:0,matches:0,total:types.length,score:0,combo:0,bestCombo:0,lastMatchMove:0,hints:0,rearranges:0,undos:0,magics:0,elapsed:0,started:false,status:'playing',seconds:mode==='rush'?Math.max(120,spec.matches*10):null,spark:0,lanterns:0,order,matchedGoods:Array(GOODS.length).fill(0)};
 }
 export function pick(state,shelf,slot){
+  if(state.mode==='puzzle')return {ok:false};
   if(state.status!=='playing'||state.tray.length>=7||state.shelves[shelf]?.lock>0)return{ok:false};
   const type=state.shelves[shelf]?.rows[0]?.[slot];if(type==null)return{ok:false};
   state.started=true;state.moves++;state.shelves[shelf].rows[0][slot]=null;state.tray.push(type);state.tray.sort((a,b)=>a-b);
@@ -110,6 +113,7 @@ export function pick(state,shelf,slot){
   return{ok:true,matched,type,full:state.tray.length===7,...events};
 }
 export function rearrange(state){
+  if(state.mode==='puzzle')return false;
   if(state.status!=='playing')return false;
   const all=state.shelves.flatMap(s=>s.rows.flat().filter(t=>t!==null)).concat(state.tray);state.rearranges++;state.combo=0;state.lastMatchMove=-10;
   const options={...(state.spec||{}),shelfCount:state.shelves.length,locks:0}; // ribbons already opened for a fresh start
@@ -123,8 +127,9 @@ export function hint(state){
   return null;
 }
 export function tick(state,delta){if(state.status!=='playing'||!state.started||delta<=0)return;state.elapsed+=delta;if(state.mode==='rush'&&!state.clockDisabled&&remaining(state)>3){state.seconds=Math.max(0,state.seconds-delta);if(state.seconds===0)state.status='timeout';}}
-export function starsFor(state){return state.status!=='won'?0:1+(state.rearranges===0?1:0)+(state.bestCombo>=(state.spec?.chainGoal||5)||state.order?.fulfilled?1:0);}
+export function starsFor(state){if(state.mode==='puzzle')return puzzleStars(state);return state.status!=='won'?0:1+(state.rearranges===0?1:0)+(state.bestCombo>=(state.spec?.chainGoal||5)||state.order?.fulfilled?1:0);}
 export function validateSave(s){
+  if(s?.mode==='puzzle')return validateShelfGame(s);
   if(!s||![1,2].includes(s.version)||!MODES.includes(s.mode)||!Object.hasOwn(THEMES,s.theme)||!Array.isArray(s.shelves)||s.shelves.length<1||s.shelves.length>12||!Array.isArray(s.tray)||s.tray.length>7)return false;
   const item=t=>t===null||Number.isInteger(t)&&t>=0&&t<GOODS.length;
   if(!s.shelves.every(sh=>sh&&Array.isArray(sh.rows)&&sh.rows.length<=48&&sh.rows.every(row=>Array.isArray(row)&&row.length===3&&row.every(item))&&(!sh.lock||Number.isInteger(sh.lock)&&sh.lock>=0&&sh.lock<=5)))return false;
@@ -143,5 +148,6 @@ export function validateSave(s){
 }
 export function upgradeGame(s){
   if(!validateSave(s))return null;
+  if(s.mode==='puzzle')return clone(s);
   return {...s,version:2,spec:s.spec||{mechanics:[],chainGoal:5,shelfCount:s.shelves.length},spark:s.spark||0,lanterns:s.lanterns||0,magics:s.magics||0,matchedGoods:s.matchedGoods||Array(GOODS.length).fill(0)};
 }

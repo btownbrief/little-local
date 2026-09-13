@@ -1,3 +1,5 @@
+> Historical design for the original basket game. The September 13 default and harder shelf mechanics are documented in [Shelf puzzle design](shelf-puzzle-design.md).
+
 # Little Local: research and design decisions
 
 Research checked September 12, 2026. The user chose **tap any three identical goods** and a **cozy Burlington corner shop**. The implementation is an original browser game with original artwork, names, interface, and code.
