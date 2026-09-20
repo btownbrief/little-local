@@ -1,13 +1,15 @@
 import {parentPort,workerData} from 'node:worker_threads';
 import {writeFile} from 'node:fs/promises';
+import {searchOptions} from './shelf-batches.mjs';
 import {candidate} from './generate-shelf-puzzles.mjs';
-import {shiftGood,solveShelves,shelfRemaining} from '../dist/shelf-rules.js';
+import {shiftGood,solveShelves,shelfRemaining,firstMatchDepth} from '../dist/shelf-rules.js';
 const records=[];
 for(let id=workerData.start;id<=workerData.end;id++){
   let record;
   for(let attempt=0;attempt<1200;attempt++){
     const shelves=candidate(id,attempt);
-    const route=solveShelves(shelves,{width:id>=201?55:65,depth:180,maxNodes:id>=201?85000:40000});
+    if(firstMatchDepth(shelves,2,5000)!==-1)continue;
+    const route=solveShelves(shelves,searchOptions(id));
     if(!route||route.length<26+Math.floor((id-1)/200))continue;
     let board=shelves,setup=0,opening=0,unlocks=0;
     for(let j=0;j<route.length;j++){const r=shiftGood(board,route[j]);if(!r)throw Error('invalid proof');if(!r.matches.length)setup++;else if(!opening)opening=j+1;unlocks+=r.unlocked.length;board=r.shelves;}

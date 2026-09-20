@@ -26,8 +26,8 @@ if(process.argv[1]?.endsWith('generate-shelf-puzzles.mjs')){
   for(let id=1;id<=limit;id++){
     let record;
     for(let attempt=0;attempt<500;attempt++){
-      tries++;const shelves=candidate(id,attempt),first=firstMatchDepth(shelves,3,5000);
-      if(first!==null&&first<3||first===Infinity)continue;
+      tries++;const shelves=candidate(id,attempt),first=firstMatchDepth(shelves,2,5000);
+      if(first!==-1)continue;
       const route=solveShelves(shelves,{width:70,depth:160,maxNodes:45000});if(!route||route.length<28)continue;
       let board=shelves,setup=0,firstMove=0,unlocks=0;
       for(let j=0;j<route.length;j++){const r=shiftGood(board,route[j]);if(!r)throw Error('invalid proof');if(!r.matches.length)setup++;else if(!firstMove)firstMove=j+1;unlocks+=r.unlocked.length;board=r.shelves;}

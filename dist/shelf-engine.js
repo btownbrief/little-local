@@ -1,8 +1,8 @@
-import {GOODS,THEMES,CHAPTERS} from './content.js';
+import {GOODS,THEMES,CHAPTERS,LEVEL_COUNT} from './content.js';
 import {SHELF_PUZZLES} from './shelf-catalog.js';
 import {copyShelves,shelfRemaining,shelfKey,shiftGood,solveShelves} from './shelf-rules.js';
 export {shelfSpaces,shelfMoves,shiftGood} from './shelf-rules.js';
-export const PUZZLE_COUNT=600;
+export const PUZZLE_COUNT=LEVEL_COUNT;
 const clampId=id=>Math.min(PUZZLE_COUNT,Math.max(1,Math.trunc(Number(id)||1)));
 export function puzzleSpec(id) {
   id=clampId(id);const chapterIndex=Math.floor((id-1)/50),chapter=CHAPTERS[chapterIndex],p=SHELF_PUZZLES[id-1];

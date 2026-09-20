@@ -41,3 +41,31 @@ test('malformed imported mechanics, orders, and completion states are rejected',
   const original=createGame({mode:'trail',levelId:51,seed:7});
   for(const corrupt of [s=>s.spec.chainGoal='<img>',s=>s.spec.mechanics=['unknown'],s=>s.order={type:99,within:2,target:1,done:0},s=>s.status='won',s=>s.levelId=601,s=>s.matchedGoods=[-1]]){const bad=clone(original);corrupt(bad);assert.equal(validateSave(bad),false);}
 });
+
+test('backup counters and unlocks are bounded by collection and medal records',()=>{
+  const p=freshProfile();
+  for(const key of ['completed','totalMatches','bestCombo','perfect','rushWins','pantryWins','orders'])p[key]=999999999;
+  p.earned=['first','local','chain15','perfect10','rush10','pantry','orders'];p.settings.decor='evening';
+  const restored=parseBackup(backup(p));
+  for(const key of ['completed','totalMatches','bestCombo','perfect','rushWins','pantryWins','orders'])assert.equal(restored[key],0,key);
+  assert.deepEqual(restored.earned,[]);assert.equal(restored.settings.decor,'home');
+  p.collection[0]=36;p.trail={1:{stars:3}};
+  const bounded=parseBackup(backup(p));
+  assert.equal(bounded.completed,2);assert.equal(bounded.totalMatches,12);assert.equal(bounded.bestCombo,12);
+  assert.equal(bounded.perfect,2);assert.equal(bounded.rushWins,2);assert.equal(bounded.orders,2);assert.equal(bounded.pantryWins,0);
+  assert.equal(bounded.trailStars,3);assert.equal(bounded.trailWins,1);assert.ok(!bounded.earned.includes('local'));
+  p.collection=[];p.completed=0;
+  assert.equal(parseBackup(backup(p)).completed,1);
+});
+
+test('order flags must be booleans and progress must be an integer within its target',()=>{
+  const original=createGame({mode:'trail',levelId:10,seed:9});
+  assert.ok(validateSave(original));
+  for(const key of ['fulfilled','missed'])for(const value of [undefined,null,0,1,'false',{},[]]){
+    const s=clone(original);s.order[key]=value;assert.equal(validateSave(s),false,`${key}: ${value}`);
+  }
+  for(const done of [-1,1.5,2,999999999,NaN,Infinity,'0']){
+    const s=clone(original);s.order.done=done;assert.equal(validateSave(s),false,`done: ${done}`);
+  }
+  for(const done of [0,1]){const s=clone(original);s.order.done=done;assert.ok(validateSave(s));}
+});

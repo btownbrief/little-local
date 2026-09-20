@@ -1,5 +1,5 @@
 import {createShelfGame,validateShelfGame,puzzleStars} from './shelf-engine.js';
-import {GOODS,THEMES,levelSpec,MECHANICS} from './content.js';
+import {GOODS,THEMES,levelSpec,MECHANICS,LEVEL_COUNT} from './content.js';
 export {GOODS,THEMES};
 export const MODES=['puzzle','cozy','trail','daily','rush','pantry'];
 export function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
@@ -138,9 +138,9 @@ export function validateSave(s){
   if(s.round<1||s.total<0||s.total>144||s.matches<0||s.moves<0||s.elapsed<0)return false;
   if(s.mode==='rush'&&(!Number.isFinite(s.seconds)||s.seconds<0))return false;
   if(typeof s.date!=='string'||s.date!==''&&!/^\d{4}-\d{2}-\d{2}$/.test(s.date))return false;
-  if(s.mode==='trail'&&(!Number.isInteger(s.levelId)||s.levelId<1||s.levelId>600||s.spec?.chapterIndex!==Math.floor((s.levelId-1)/50)))return false;
+  if(s.mode==='trail'&&(!Number.isInteger(s.levelId)||s.levelId<1||s.levelId>LEVEL_COUNT||s.spec?.chapterIndex!==Math.floor((s.levelId-1)/50)))return false;
   if(s.spec){if(!Array.isArray(s.spec.mechanics)||s.spec.mechanics.some(m=>!Object.hasOwn(MECHANICS,m))||!Number.isFinite(s.spec.chainGoal)||s.spec.chainGoal<1||s.spec.chainGoal>48)return false;}
-  if(s.order&&(!Number.isInteger(s.order.type)||s.order.type<0||s.order.type>=GOODS.length||!Number.isFinite(s.order.within)||s.order.within<1||s.order.within>48||!Number.isFinite(s.order.target)||s.order.target<1||s.order.target>48||!Number.isFinite(s.order.done)))return false;
+  if(s.order&&(!Number.isInteger(s.order.type)||s.order.type<0||s.order.type>=GOODS.length||!Number.isFinite(s.order.within)||s.order.within<1||s.order.within>48||!Number.isFinite(s.order.target)||s.order.target<1||s.order.target>48||!Number.isInteger(s.order.done)||s.order.done<0||s.order.done>s.order.target||typeof s.order.fulfilled!=='boolean'||typeof s.order.missed!=='boolean'))return false;
   if(s.matchedGoods&&(!Array.isArray(s.matchedGoods)||s.matchedGoods.length!==GOODS.length||s.matchedGoods.some(n=>!Number.isInteger(n)||n<0||n>144)))return false;
   for(const k of ['spark','lanterns','magics'])if(s[k]!==undefined&&(!Number.isInteger(s[k])||s[k]<0||s[k]>1000))return false;
   if(s.status==='won'&&remaining(s)!==0)return false;

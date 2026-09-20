@@ -84,5 +84,6 @@ export function firstMatchDepth(shelves,maxDepth=6,maxNodes=40000) {
     }
     frontier=next;if(!frontier.length)return Infinity;
   }
-  return null;
+  // -1 means the entire depth limit was searched; null means the node budget ran out.
+  return -1;
 }
