@@ -87,7 +87,7 @@ export const ACHIEVEMENTS = [
   {id:'trail10',name:'Around the block',icon:'↗',description:'Clear 10 different Trail levels.',stat:'trailWins',goal:10},
   {id:'trail50',name:'Part of the neighborhood',icon:'⌂',description:'Clear 50 different Trail levels.',stat:'trailWins',goal:50},
   {id:'trail200',name:'The scenic route',icon:'≋',description:'Clear 200 different Trail levels.',stat:'trailWins',goal:200},
-  {id:'trail600',name:'Every corner, a memory',icon:'♔',description:'Clear all 600 Trail levels.',stat:'trailWins',goal:600},
+  {id:'trail600',name:'Every corner, a memory',icon:'♔',description:`Clear all ${LEVEL_COUNT} Trail levels.`,stat:'trailWins',goal:LEVEL_COUNT},
   {id:'orders',name:'A thoughtful neighbor',icon:'♡',description:'Fulfill 10 optional customer orders.',stat:'orders',goal:10},
   {id:'collector',name:'A little of everything',icon:'❋',description:'Sort all 24 kinds of goods.',stat:'uniqueGoods',goal:24},
   {id:'stars',name:'A sky full of little stars',icon:'★',description:'Earn 100 Trail stars.',stat:'trailStars',goal:100},

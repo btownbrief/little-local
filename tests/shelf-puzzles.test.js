@@ -61,3 +61,22 @@ test('malformed shelf saves cannot alter the key, move target, stock counts or c
   const s=createShelfGame(1);assert.ok(upgradeGame(s));
   for(const mutate of [x=>x.spec.target=1,x=>x.shelves[0].key=3,x=>x.shelves[0].rows[0][1]=null,x=>x.status='won',x=>x.levelId=601,x=>x.tray=[0],x=>x.matchedGoods[0]=3,x=>x.moves=-1,x=>x.combo=null,x=>x.shelves.find(s=>s.lock).lock=0,x=>x.shelves[0].rows=[]]){const bad=clone(s);mutate(bad);assert.equal(validateSave(bad),false);assert.equal(upgradeGame(bad),null);}
 });
+
+test('catalog first matches need at least three moves except the ten released two-move openings',()=>{
+  const exceptions=[26,67,72,75,99,256,263,272,531,567],found=[];
+  for(const entry of SHELF_PUZZLES){
+    const depth=firstMatchDepth(entry.shelves,2,100000);
+    if(exceptions.includes(entry.id)){
+      assert.equal(depth,2,`Released exception ${entry.id}`);found.push(entry.id);
+    }else assert.equal(depth,-1,`Puzzle ${entry.id} must have no match within two moves`);
+  }
+  assert.deepEqual(found,exceptions);
+});
+
+test('first-match search distinguishes depth limits, node limits, dead ends and real depths',()=>{
+  const shelves=createShelfGame(1).shelves;
+  assert.equal(firstMatchDepth(shelves,2,100000),-1);
+  assert.equal(firstMatchDepth(shelves,2,0),null);
+  assert.equal(firstMatchDepth([{rows:[[0,1,2]],lock:1,key:0}],2),Infinity);
+  assert.equal(firstMatchDepth(shelves,4,100000),4);
+});
